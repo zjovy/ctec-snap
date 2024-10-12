@@ -10,67 +10,57 @@ load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # JSON file name
-JSON_FILE = r"C:\ESW2024\WildHacks2024\ctec-bot\testing\bain_cs111.json"
+JSON_FILE = r"C:\ESW2024\WildHacks2024\ctec-bot\testing\WORKING_JSON.json"
 
-def summarize_text(text):
+def analyze_reviews(text):
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+       model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are a helpful assistant that summarizes course reviews."},
-            {"role": "user", "content": f"Summarize the following course reviews: {text}"}
-        ],
-        max_tokens=150
-    )
-    return response.choices[0].message['content'].strip()
+            {"role": "system", "content": "You are an AI assistant that analyzes course reviews in the style of Amazon product reviews."},
+            {"role": "user", "content": f"""
+            Analyze the following course reviews and provide:
+            1. A detailed "Students say" summary (3-4 sentences) that highlights the main points students mention, including both positive and negative aspects. Begin with "Students say" and then provide a comprehensive overview of student opinions.
+            2. A list of pros (3-5 bullet points).
+            3. A list of cons (3-5 bullet points).
+            4. A star rating out of 5, based on the overall sentiment.
 
-def extract_key_aspects(text):
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant that extracts key aspects from course reviews."},
-            {"role": "user", "content": f"Extract and list the key aspects mentioned in these course reviews. Return the result as a Python dictionary where the keys are the aspects and the values are the number of times they are mentioned: {text}"}
+            Format the output as a JSON object with keys: "summary", "pros", "cons", and "rating".
+            Ensure the summary is detailed and covers multiple aspects of student feedback.
+
+            Course reviews: {text}
+            """}
         ],
-        max_tokens=200
+        max_tokens=1500
     )
     return json.loads(response.choices[0].message['content'].strip())
 
 def process_evaluations():
-    # Check if the JSON file exists
     if not os.path.exists(JSON_FILE):
         print(f"Error: JSON file '{JSON_FILE}' not found")
         return
 
     try:
-        # Read the JSON file
         with open(JSON_FILE, 'r') as file:
             data = json.load(file)
         
-        # Get the reviews text
-        reviews_text = data['Responses'][0]
+        class_name = list(data.keys())[0]
+        class_number = list(data[class_name].keys())[0]
+        professor = list(data[class_name][class_number].keys())[0]
+        reviews_text = data[class_name][class_number][professor]["Responses"][0]
         
-        # Summarize the reviews
-        summary = summarize_text(reviews_text)
+        analysis = analyze_reviews(reviews_text)
         
-        # Extract key aspects
-        aspects = extract_key_aspects(reviews_text)
-        
-        # Prepare the response
-        response = {
-            "class_name": "CS",  # You might want to extract this from the reviews or add it to your JSON
-            "class_number": "111",  # You might want to extract this from the reviews or add it to your JSON
-            "professor": "Unknown",  # You might want to extract this from the reviews or add it to your JSON
-            "summary": summary,
-            "key_aspects": aspects
-        }
-        
-        # Print the response
-        print("Processed Evaluation:")
-        print(f"Class: {response['class_name']} {response['class_number']}")
-        print(f"Professor: {response['professor']}")
-        print(f"\nSummary: {response['summary']}")
-        print("\nKey Aspects:")
-        for aspect, count in response['key_aspects'].items():
-            print(f"- {aspect}: {count}")
+        print(f"Course: {class_name} {class_number}")
+        print(f"Professor: {professor}")
+        print(f"\nRating: {analysis['rating']} out of 5 stars")
+        print(f"\nStudents say:")
+        print(analysis['summary'])
+        print("\nPros:")
+        for pro in analysis['pros']:
+            print(f"- {pro}")
+        print("\nCons:")
+        for con in analysis['cons']:
+            print(f"- {con}")
 
     except Exception as e:
         print(f"An error occurred while processing the JSON file: {str(e)}")
