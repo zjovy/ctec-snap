@@ -42,3 +42,21 @@ export const fetchProfessors = async (major, courseNumber) => {
         console.error('Error fetching professors:', error);
     }
 };
+
+// Fetch responses (reviews) for a specific major, course number, and professor
+export const fetchResponses = async (major, courseNumber, professor) => {
+    const responsesRef = ref(db, `/${major}/${courseNumber}/${professor}/Responses`);
+    try {
+        const snapshot = await get(responsesRef);
+        if (snapshot.exists()) {
+            const data = snapshot.val(); // Array of responses (reviews)
+            return data;  // Return the array of responses
+        } else {
+            console.log('No responses available for this course and professor.');
+            return [];
+        }
+    } catch (error) {
+        console.error('Error fetching responses:', error);
+        return [];
+    }
+};
