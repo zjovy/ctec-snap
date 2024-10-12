@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import Select from 'react-select'
+import { useNavigate } from 'react-router-dom';
 
 const SearchPage = () => {
-    // Options for both dropdowns
+  const navigate = useNavigate();
+
   const majors = [
     { value: 'COMP_SCI', label: 'Computer Science' },
     { value: 'COMP_ENG', label: 'Computer Engineering' },
@@ -28,13 +30,15 @@ const SearchPage = () => {
     { value: 'srutiBhagavatula', label: 'Sruti Bhagavatula' },
   ]
 
-
-
   // State to manage the selected value for both dropdowns
   const [selectedMajor, setSelectedMajor] = useState(null);
   const [selectedCourseNumber, setSelectedCourseNumber] = useState(null);
   const [selectedProffesor, setSelectedProffesor] = useState(null);
 
+  const searchButtonClick = () => {
+    // Define the variables to pass
+    navigate(`/search?proffesor=${encodeURIComponent(selectedProffesor)}&major=${encodeURIComponent(selectedMajor)}&number=${encodeURIComponent(selectedCourseNumber)}`);
+  };
 
   return (
     <div class="flex justify-center items-center h-screen font-mono text-lg">
@@ -46,7 +50,7 @@ const SearchPage = () => {
             <label class="mt-6 mb-2">Insights on your favorite classes </label>
             {/* Searchable Dropdown */}
             <div class="flex flex-row">
-            <div class="mr-2 w-64">
+                <div class="mr-2 w-64">
                     <Select
                         options={professors}
                         value={selectedProffesor}
@@ -92,6 +96,9 @@ const SearchPage = () => {
                           }}
                     />
                 </div>
+            </div>
+            <div>
+                <button onClick={searchButtonClick}>Seach</button>
             </div>
         </div>
     </div>

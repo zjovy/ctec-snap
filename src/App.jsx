@@ -8,7 +8,7 @@ const App = () => {
   return (
     <Routes>
         <Route exact path="/" element={<SearchPage />} />
-        <Route exact path="/search/:id" element={<ResultsPage />} />
+        <Route exact path="/search" element={<ResultsPage />} />
     </Routes>
   )
 }
