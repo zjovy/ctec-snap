@@ -16,15 +16,16 @@ firebase_admin.initialize_app(cred, {'databaseURL':'https://ctec-snap-default-rt
 ref = db.reference('/')
 
 app = Flask(__name__)
-# CORS(app)
-CORS(app, resources={r"/gptResponse": {"origins": "http://localhost:5173"}})
-app.config['CORS_HEADERS'] = 'Content-Type'
+CORS(app)
+# CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+# CORS(app, resources={r"/*": {"origins": "http://localhost:5173", "methods": ["GET", "POST", "OPTIONS"], "allow_headers": "*"}})
+# app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route("/")
 def hello():
   return "Hello World!"
 
-@app.route("/gptResponse", methods=['GET', 'OPTIONS'])
+@app.route("/gptResponse", methods=['GET'])
 @cross_origin()
 def gptResponse():
   department = request.args.get('department')
@@ -38,6 +39,8 @@ def gptResponse():
       result = process_evaluations(course_data)
 
       # Use jsonify to return a valid JSON response
+      # print(result)
+      # response = jsonify(result)
       return jsonify(result)
   else:
       return jsonify({"error": "No data found"}), 404
