@@ -48,7 +48,7 @@ const SearchPage = () => {
 
   const searchButtonClick = () => {
     // Define the variables to pass
-    navigate(`/search?proffesor=${encodeURIComponent(selectedProfessor)}&major=${encodeURIComponent(selectedMajor)}&number=${encodeURIComponent(selectedCourseNumber)}`);
+    navigate(`/search?professor=${encodeURIComponent(selectedProfessor)}&major=${encodeURIComponent(selectedMajor)}&number=${encodeURIComponent(selectedCourseNumber)}`);
   };
 
   return (
