@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 import pandas as pd
 from transformers import pipeline
 
-app = Flask(__name__)
+app = Flask(__name__) # Initialize the Flask app
 
 # Initialize the summarization pipeline
 summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
