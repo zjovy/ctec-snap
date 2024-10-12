@@ -51,24 +51,52 @@ def analyze_reviews(text):
 
             Use only these exact tags as the outputs for the pros, cons, and neutral sections. Each section can have more than one tag. If some tags are not applicable based on your analysis, do not use them.
 
-            Format the output as a JSON object with keys: "summary", "pros", "cons", "neutral", and "rating".
+            For each tag used, provide the full, complete sentences from the original text that support the use of that tag. Ensure these sentences follow proper grammar and are enclosed in quotation marks. You must output at least 3 sentences per tag even if they are loosely related.
+
+            Format the output as a JSON object with the following structure:
+            {{
+                "summary": "Students say...",
+                "pros": [
+                    {{
+                        "tag": "Tag Name",
+                        "sentences": ["Full sentence 1", "Full sentence 2", "Full sentence 3", "Full sentence 4", ...]
+                    }},
+                    ...
+                ],
+                "cons": [
+                    {{
+                        "tag": "Tag Name",
+                        "sentences": ["Full sentence 1", "Full sentence 2", "Full sentence 3", "Full sentence 4", ...]
+                    }},
+                    ...
+                ],
+                "neutral": [
+                    {{
+                        "tag": "Tag Name",
+                        "sentences": ["Full sentence 1", "Full sentence 2", "Full sentence 3", "Full sentence 4", ...]
+                    }},
+                    ...
+                ],
+                "rating": X
+            }}
+
             Ensure the summary is detailed and covers multiple aspects of student feedback.
 
             Course reviews: {text}
             """}
         ],
-        max_tokens=1500
+        max_tokens=4096
     )
     return json.loads(response.choices[0].message['content'].strip())
 
-def process_evaluations(data):
-    # if not os.path.exists(JSON_FILE):
-    #     print(f"Error: JSON file '{JSON_FILE}' not found")
-    #     return
-    print("starting the process_evaluations!")
+def process_evaluations():
+    if not os.path.exists(JSON_FILE):
+        print(f"Error: JSON file '{JSON_FILE}' not found")
+        return
+
     try:
-        # with open(JSON_FILE, 'r') as file:
-        #     data = json.load(file)
+        with open(JSON_FILE, 'r') as file:
+            data = json.load(file)
         
         class_name = list(data.keys())[0]
         class_number = list(data[class_name].keys())[0]
@@ -77,19 +105,8 @@ def process_evaluations(data):
         
         analysis = analyze_reviews(reviews_text)
         
-        print (analysis)
-        # print(f"Course: {class_name} {class_number}")
-        # print(f"Professor: {professor}")
-        # print(f"\nRating: {analysis['rating']} out of 5 stars")
-        # print(f"\nStudents say:")
-        # print(analysis['summary'])
-        # print("\nPros:")
-        # for pro in analysis['pros']:
-        #     print(f"- {pro}")
-        # print("\nCons:")
-        # for con in analysis['cons']:
-        #     print(f"- {con}")
-        return analysis
+        print(json.dumps(analysis, indent=2))
+
     except Exception as e:
         print(f"An error occurred while processing the JSON file: {str(e)}")
 
