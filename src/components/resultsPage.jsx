@@ -23,7 +23,7 @@ const ResultsPage = () => {
     const { professor, major, number } = getUrlParams();
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100 p-20 w-screen h-screen">
+        <div className="min-h-screen flex items-center justify-center bg-gray-100 p-20 w-screen h-screen font-mono">
             <ReviewSummary 
                 name={reviewData.name} 
                 rating={reviewData.rating} 
