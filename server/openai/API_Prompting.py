@@ -20,11 +20,38 @@ def analyze_reviews(text):
             {"role": "user", "content": f"""
             Analyze the following course reviews and provide:
             1. A detailed "Students say" summary (3-4 sentences) that highlights the main points students mention, including both positive and negative aspects. Begin with "Students say" and then provide a comprehensive overview of student opinions.
-            2. A list of pros (3-5 bullet points).
-            3. A list of cons (3-5 bullet points).
-            4. A star rating out of 5, based on the overall sentiment.
+            2. A list of pros (3-5 items).
+            3. A list of cons (3-5 items).
+            4. A list of neutral aspects (0-3 items).
+            5. A star rating out of 5, based on the overall sentiment.
 
-            Format the output as a JSON object with keys: "summary", "pros", "cons", and "rating".
+            For the pros, cons, and neutral sections, use only the following tags if applicable:
+
+            Positive Tags:
+            Engaging Professor
+            Helpful TAs
+            Great Introduction to CS
+            Supportive Environment
+            Flexible Grading
+            Challenging but Rewarding
+            Encourages Collaboration
+
+            Neutral Tags:
+            Lenient Grading
+            Flexible Schedule
+            Requires Office Hours
+
+            Negative Tags:
+            Challenging Syntax
+            Fast-Paced for Beginners
+            Frustrating Language Choice
+            Pacing Imbalance
+            Workload Heavier than Expected
+            Limited Practical Application
+
+            Use only these exact tags as the outputs for the pros, cons, and neutral sections. Each section can have more than one tag. If some tags are not applicable based on your analysis, do not use them.
+
+            Format the output as a JSON object with keys: "summary", "pros", "cons", "neutral", and "rating".
             Ensure the summary is detailed and covers multiple aspects of student feedback.
 
             Course reviews: {text}
@@ -50,17 +77,18 @@ def process_evaluations():
         
         analysis = analyze_reviews(reviews_text)
         
-        print(f"Course: {class_name} {class_number}")
-        print(f"Professor: {professor}")
-        print(f"\nRating: {analysis['rating']} out of 5 stars")
-        print(f"\nStudents say:")
-        print(analysis['summary'])
-        print("\nPros:")
-        for pro in analysis['pros']:
-            print(f"- {pro}")
-        print("\nCons:")
-        for con in analysis['cons']:
-            print(f"- {con}")
+        print (analysis)
+        # print(f"Course: {class_name} {class_number}")
+        # print(f"Professor: {professor}")
+        # print(f"\nRating: {analysis['rating']} out of 5 stars")
+        # print(f"\nStudents say:")
+        # print(analysis['summary'])
+        # print("\nPros:")
+        # for pro in analysis['pros']:
+        #     print(f"- {pro}")
+        # print("\nCons:")
+        # for con in analysis['cons']:
+        #     print(f"- {con}")
 
     except Exception as e:
         print(f"An error occurred while processing the JSON file: {str(e)}")
