@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import Select from 'react-select';
+import { useNavigate } from 'react-router-dom';
 import { fetchMajorsAndCourses, fetchProfessors } from '../../server/database/firebasefuncs';
 
 const SearchPage = () => {
+  const navigate = useNavigate();
+  
   const [majors, setMajors] = useState([]);
   const [coursesByMajor, setCoursesByMajor] = useState({}); // Store courses by major
   const [courseNumbers, setCourseNumbers] = useState([]);    // Store course numbers for selected major
@@ -41,6 +44,12 @@ const SearchPage = () => {
       fetchProf();
     }
   }, [selectedMajor, selectedCourseNumber]);
+
+
+  const searchButtonClick = () => {
+    // Define the variables to pass
+    navigate(`/search?proffesor=${encodeURIComponent(selectedProffesor)}&major=${encodeURIComponent(selectedMajor)}&number=${encodeURIComponent(selectedCourseNumber)}`);
+  };
 
   return (
     <div className="flex justify-center items-center h-screen font-mono text-lg">
@@ -86,6 +95,9 @@ const SearchPage = () => {
               isDisabled={!selectedCourseNumber} // Disable if no course number is selected
             />
           </div>
+        </div>
+        <div>
+                <button onClick={searchButtonClick}>Seach</button>
         </div>
       </div>
     </div>
