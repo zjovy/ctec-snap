@@ -10,7 +10,7 @@ load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # JSON file name
-JSON_FILE = os.path.abspath(os.path.join(os.getcwd(), "..", "..", "testing", "bain_cs111.json"))
+JSON_FILE = r"C:\ESW2024\WildHacks2024\ctec-bot\testing\bain_cs111.json"
 
 def summarize_text(text):
     response = openai.ChatCompletion.create(
@@ -23,6 +23,17 @@ def summarize_text(text):
     )
     return response.choices[0].message['content'].strip()
 
+def extract_key_aspects(text):
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant that extracts key aspects from course reviews."},
+            {"role": "user", "content": f"Extract and list the key aspects mentioned in these course reviews. Return the result as a Python dictionary where the keys are the aspects and the values are the number of times they are mentioned: {text}"}
+        ],
+        max_tokens=200
+    )
+    return json.loads(response.choices[0].message['content'].strip())
+
 def process_evaluations():
     # Check if the JSON file exists
     if not os.path.exists(JSON_FILE):
@@ -34,23 +45,20 @@ def process_evaluations():
         with open(JSON_FILE, 'r') as file:
             data = json.load(file)
         
-        # Combine all text reviews into one string
-        all_reviews = " ".join([review['text'] for review in data['reviews']])
+        # Get the reviews text
+        reviews_text = data['Responses'][0]
         
-        # Summarize the combined reviews using OpenAI
-        summary = summarize_text(all_reviews)
+        # Summarize the reviews
+        summary = summarize_text(reviews_text)
         
         # Extract key aspects
-        aspects = {}
-        for review in data['reviews']:
-            for aspect in review['aspects']:
-                aspects[aspect] = aspects.get(aspect, 0) + 1
+        aspects = extract_key_aspects(reviews_text)
         
         # Prepare the response
         response = {
-            "class_name": data.get('class_name', ''),
-            "class_number": data.get('class_number', ''),
-            "professor": data.get('professor', ''),
+            "class_name": "CS",  # You might want to extract this from the reviews or add it to your JSON
+            "class_number": "111",  # You might want to extract this from the reviews or add it to your JSON
+            "professor": "Unknown",  # You might want to extract this from the reviews or add it to your JSON
             "summary": summary,
             "key_aspects": aspects
         }
