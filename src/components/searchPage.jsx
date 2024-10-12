@@ -97,7 +97,12 @@ const SearchPage = () => {
           </div>
         </div>
         <div>
-          <button onClick={searchButtonClick}>Seach</button>
+          <button 
+            class="bg-[#f172ac] text-white font-semibold rounded-lg px-4 py-2 hover:bg-[#fbbee6] transition mt-3"
+            disabled={!selectedCourseNumber || !selectedMajor || !selectedProfessor}
+            onClick={searchButtonClick}>
+                Search
+          </button>
         </div>
       </div>
     </div>
