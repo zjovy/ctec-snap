@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 import firebase_admin
 from firebase_admin import credentials, db
 import os
@@ -22,7 +22,12 @@ def hello():
 
 @app.route("/gptResponse", methods=['GET'])
 def gptResponse():
-   return process_evaluations(ref.get())
+  department = request.args.get('department')
+  course = request.args.get('course')
+  professor = request.args.get('professor')
+  ref = db.reference(f'{department}/{course}/{professor}')
+  
+  return process_evaluations(ref.get())
 
 #   return process_evaluations(json_file)
 
