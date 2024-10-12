@@ -1,9 +1,6 @@
 import os
-from flask import Flask, request, jsonify
 import pandas as pd
 from transformers import pipeline
-
-app = Flask(__name__) # Initialize the Flask app
 
 # Initialize the summarization pipeline
 summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
@@ -11,12 +8,12 @@ summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 # CSV file name
 CSV_FILE = "cs111_reviews.csv"
 
-@app.route('/process_evaluations', methods=['POST'])
 def process_evaluations():
     # Check if the CSV file exists in the current directory
     if not os.path.exists(CSV_FILE):
-        return jsonify({"error": f"CSV file '{CSV_FILE}' not found in the current directory"}), 400
-    
+        print(f"Error: CSV file '{CSV_FILE}' not found in the current directory")
+        return
+
     try:
         # Read the CSV file
         df = pd.read_csv(CSV_FILE)
@@ -27,22 +24,29 @@ def process_evaluations():
         # Summarize the combined reviews
         summary = summarizer(all_reviews, max_length=150, min_length=50, do_sample=False)[0]['summary_text']
         
-        # Extract key aspects (this is a simple example, you might want to use more sophisticated NLP techniques)
+        # Extract key aspects
         aspects = df['aspect'].value_counts().to_dict()
         
         # Prepare the response
         response = {
-            "class_name": request.form.get('class_name', ''),
-            "class_number": request.form.get('class_number', ''),
-            "professor": request.form.get('professor', ''),
+            "class_name": "CS",  # You can modify these as needed
+            "class_number": "111",
+            "professor": "Example Professor",
             "summary": summary,
             "key_aspects": aspects
         }
         
-        return jsonify(response)
-    
+        # Print the response
+        print("Processed Evaluation:")
+        print(f"Class: {response['class_name']} {response['class_number']}")
+        print(f"Professor: {response['professor']}")
+        print(f"\nSummary: {response['summary']}")
+        print("\nKey Aspects:")
+        for aspect, count in response['key_aspects'].items():
+            print(f"- {aspect}: {count}")
+
     except Exception as e:
-        return jsonify({"error": f"An error occurred while processing the CSV file: {str(e)}"}), 500
+        print(f"An error occurred while processing the CSV file: {str(e)}")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    process_evaluations()
