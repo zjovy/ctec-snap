@@ -61,14 +61,14 @@ def analyze_reviews(text):
     )
     return json.loads(response.choices[0].message['content'].strip())
 
-def process_evaluations():
-    if not os.path.exists(JSON_FILE):
-        print(f"Error: JSON file '{JSON_FILE}' not found")
-        return
-
+def process_evaluations(data):
+    # if not os.path.exists(JSON_FILE):
+    #     print(f"Error: JSON file '{JSON_FILE}' not found")
+    #     return
+    print("starting the process_evaluations!")
     try:
-        with open(JSON_FILE, 'r') as file:
-            data = json.load(file)
+        # with open(JSON_FILE, 'r') as file:
+        #     data = json.load(file)
         
         class_name = list(data.keys())[0]
         class_number = list(data[class_name].keys())[0]
@@ -89,7 +89,7 @@ def process_evaluations():
         # print("\nCons:")
         # for con in analysis['cons']:
         #     print(f"- {con}")
-
+        return analysis
     except Exception as e:
         print(f"An error occurred while processing the JSON file: {str(e)}")
 
