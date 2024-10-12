@@ -1,37 +1,56 @@
 import os
-import pandas as pd
-from transformers import pipeline
+import json
+import openai
+from dotenv import load_dotenv
 
-# Initialize the summarization pipeline
-summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+# Load environment variables from .env file
+load_dotenv()
 
-# CSV file name
-CSV_FILE = "cs111_reviews.csv"
+# Set up OpenAI API key
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+# JSON file name
+JSON_FILE = os.path.abspath(os.path.join(os.getcwd(), "..", "..", "testing", "bain_cs111.json"))
+
+def summarize_text(text):
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant that summarizes course reviews."},
+            {"role": "user", "content": f"Summarize the following course reviews: {text}"}
+        ],
+        max_tokens=150
+    )
+    return response.choices[0].message['content'].strip()
 
 def process_evaluations():
-    # Check if the CSV file exists in the current directory
-    if not os.path.exists(CSV_FILE):
-        print(f"Error: CSV file '{CSV_FILE}' not found in the current directory")
+    # Check if the JSON file exists
+    if not os.path.exists(JSON_FILE):
+        print(f"Error: JSON file '{JSON_FILE}' not found")
         return
 
     try:
-        # Read the CSV file
-        df = pd.read_csv(CSV_FILE)
+        # Read the JSON file
+        with open(JSON_FILE, 'r') as file:
+            data = json.load(file)
         
         # Combine all text reviews into one string
-        all_reviews = " ".join(df['review'].astype(str).tolist())
+        all_reviews = " ".join([review['text'] for review in data['reviews']])
         
-        # Summarize the combined reviews
-        summary = summarizer(all_reviews, max_length=150, min_length=50, do_sample=False)[0]['summary_text']
+        # Summarize the combined reviews using OpenAI
+        summary = summarize_text(all_reviews)
         
         # Extract key aspects
-        aspects = df['aspect'].value_counts().to_dict()
+        aspects = {}
+        for review in data['reviews']:
+            for aspect in review['aspects']:
+                aspects[aspect] = aspects.get(aspect, 0) + 1
         
         # Prepare the response
         response = {
-            "class_name": "CS",  # You can modify these as needed
-            "class_number": "111",
-            "professor": "Example Professor",
+            "class_name": data.get('class_name', ''),
+            "class_number": data.get('class_number', ''),
+            "professor": data.get('professor', ''),
             "summary": summary,
             "key_aspects": aspects
         }
@@ -46,7 +65,7 @@ def process_evaluations():
             print(f"- {aspect}: {count}")
 
     except Exception as e:
-        print(f"An error occurred while processing the CSV file: {str(e)}")
+        print(f"An error occurred while processing the JSON file: {str(e)}")
 
 if __name__ == '__main__':
     process_evaluations()
