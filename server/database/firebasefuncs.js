@@ -60,3 +60,32 @@ export const fetchResponses = async (major, courseNumber, professor) => {
         return [];
     }
 };
+
+// Fetch responses (reviews) and pros/cons for a specific major, course number, and professor
+export const fetchResponsesWithProsCons = async (major, courseNumber, professor) => {
+    const responsesRef = ref(db, `/${major}/${courseNumber}/${professor}`);
+    try {
+        const snapshot = await get(responsesRef);
+        if (snapshot.exists()) {
+            const data = snapshot.val(); // Data includes both 'Responses' and 'ProsConsData'
+
+            // Extract Responses and ProsConsData if they exist
+            const responses = data.Responses || [];
+            const prosConsData = data.ProsConsData || {
+                cons: [],
+                neutral: [],
+                pros: [],
+                rating: null,
+                summary: ""
+            };
+
+            return { responses, prosConsData }; // Return both responses and pros/cons
+        } else {
+            console.log('No responses available for this course and professor.');
+            return { responses: [], prosConsData: {} };
+        }
+    } catch (error) {
+        console.error('Error fetching responses and pros/cons:', error);
+        return { responses: [], prosConsData: {} };
+    }
+};
