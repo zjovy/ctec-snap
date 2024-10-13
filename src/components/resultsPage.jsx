@@ -76,7 +76,7 @@ const ResultsPage = () => {
                             pros.map((pro, index) => (
                                 <button
                                     key={index}
-                                    className="bg-[#f172ac] text-white rounded-full px-3 py-1 text-sm mr-2 mb-2 hover:bg-[#fbbee6]"
+                                    className="bg-[#4bb47e] text-white rounded-full px-3 py-1 text-sm mr-2 mb-2 hover:bg-[#38865e]"
                                     onClick={() => handleOpen(pro.sentences, pro.tag)} // Pass sentences and tag to handleOpen
                                 >
                                     {pro.tag}
@@ -96,14 +96,14 @@ const ResultsPage = () => {
                             neutral.map((neutralItem, index) => (
                                 <button
                                     key={index}
-                                    className="bg-[#f172ac] text-white rounded-full px-3 py-1 text-sm mr-2 mb-2 hover:bg-[#fbbee6]"
+                                    className="bg-[#d5d9ee] text-black rounded-full px-3 py-1 text-sm mr-2 mb-2 hover:bg-[#7b88ca]"
                                     onClick={() => handleOpen(neutralItem.sentences, neutralItem.tag)} // Pass sentences and tag
                                 >
                                     {neutralItem.tag}
                                 </button>
                             ))
                         ) : (
-                            <div>No neutral aspects available</div>
+                            <div>N/A</div>
                         )}
                     </div>
                 </div>
@@ -116,7 +116,7 @@ const ResultsPage = () => {
                             cons.map((con, index) => (
                                 <button
                                     key={index}
-                                    className="bg-[#f172ac] text-white rounded-full px-3 py-1 text-sm mr-2 mb-2 hover:bg-[#fbbee6]"
+                                    className="bg-[#f76f6f] text-white rounded-full px-3 py-1 text-sm mr-2 mb-2 hover:bg-[#f32222]"
                                     onClick={() => handleOpen(con.sentences, con.tag)} // Pass sentences and tag
                                 >
                                     {con.tag}

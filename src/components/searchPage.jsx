@@ -101,7 +101,7 @@ const SearchPage = () => {
             class="bg-[#f172ac] text-white font-semibold rounded-lg px-4 py-2 hover:bg-[#fbbee6] transition mt-3"
             disabled={!selectedCourseNumber || !selectedMajor || !selectedProfessor}
             onClick={searchButtonClick}>
-                Search
+                Search CTECS
           </button>
         </div>
       </div>
