@@ -2,6 +2,8 @@
 
 CTEC Snap is a web application designed to streamline access to course and professor ratings from Northwestern University's internal evaluation system, CTEC. The platform allows students to easily search for courses, view detailed summaries of student reviews, and make informed decisions when selecting classes.
 
+https://github.com/user-attachments/assets/c84046ea-9333-45b0-9e38-abc16da3dbdf
+
 ### Built With:
 - **Frontend:** React, Tailwind CSS
 - **Backend:** Flask, Python, Node.js
